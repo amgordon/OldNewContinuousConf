@@ -1,4 +1,4 @@
-y = load('wordList1092');
+y = load('wordListNoAbsCon');
 testSessLength = 1092;
 testTotalLength = 1092;
 numLists = 8;
@@ -7,8 +7,8 @@ numItems = 1092;
 
 for i = 1:numLists;
     thisShuffleIdx = randperm(testTotalLength);
-    wordList_all = y.wordList1092(thisShuffleIdx,1);
-    absCon_all = y.wordList1092(thisShuffleIdx,2);
+    wordList_all = y.wordListNoAbsCon(thisShuffleIdx,1);
+    %absCon_all = y.wordList1092(thisShuffleIdx,2);
     
     oldNew_all = [];
     for j = 1:numSess
@@ -16,19 +16,21 @@ for i = 1:numLists;
         oldNew(oldNew>2)=0;
         
         wordList = cell(size(oldNew));
-        absCon = cell(size(oldNew));
+        %absCon = cell(size(oldNew));
         wordList(oldNew>0) = wordList_all(1+(j-1)*numItems:(j)*numItems);
         wordList(oldNew==0) = {'+'};
-        absCon(oldNew>0) = absCon_all(1+(j-1)*numItems:(j)*numItems);
-        absCon(oldNew==0) = {0};
+        %absCon(oldNew>0) = absCon_all(1+(j-1)*numItems:(j)*numItems);
+        %absCon(oldNew==0) = {0};
              
-        testList = [wordList' absCon' num2cell(oldNew')];
-        save (sprintf('1092_words_Test_List_%g_%g', i,j), 'testList' );
+        %testList = [wordList' absCon' num2cell(oldNew')];
+        testList = [wordList' num2cell(oldNew')];
+        save (sprintf('1092_words_Test_List_NoAC_%g_%g', i,j), 'testList' );
         
         % now make the 2nd half of lists, this time switching which is old and which
         % new.
-        testList = [wordList' absCon' num2cell(mod(3-oldNew',3)) ];
-        save (sprintf('1092_words_Test_List_%g_%g', i+numLists, j), 'testList' );
+        %testList = [wordList' absCon' num2cell(mod(3-oldNew',3)) ];
+        testList = [wordList' num2cell(mod(3-oldNew',3)) ];
+        save (sprintf('1092_words_Test_List_NoAC_%g_%g', i+numLists, j), 'testList' );
         
         oldNew_all = [oldNew_all oldNew];
         
@@ -36,21 +38,23 @@ for i = 1:numLists;
     oldNew_all(oldNew_all==0) = [];
     
     wordListStudy = wordList_all(oldNew_all==1);
-    absConStudy = absCon_all(oldNew_all==1);
+    %absConStudy = absCon_all(oldNew_all==1);
     
     p = randperm(length(wordListStudy));
     wordListStudy = wordListStudy(p);
-    absConStudy = absConStudy(p);
+    %absConStudy = absConStudy(p);
     
-    studyList = [wordListStudy absConStudy];
+    %studyList = [wordListStudy absConStudy];
+    studyList = [wordListStudy];
     
-    save (sprintf('546_words_Study_List_%g', i), 'studyList');
+    save (sprintf('546_words_Study_List_NoAC_%g', i), 'studyList');
     
     % now make the 2nd half of lists, switching old and new.
     wordListStudy = wordList_all(oldNew_all==2);
-    absConStudy = absCon_all(oldNew_all==2);
+    %absConStudy = absCon_all(oldNew_all==2);
     wordListStudy = wordListStudy(p);
-    absConStudy = absConStudy(p);
-    studyList = [wordListStudy absConStudy];
-    save (sprintf('546_words_Study_List_%g', i+numLists), 'studyList');
+    %absConStudy = absConStudy(p);
+    %studyList = [wordListStudy absConStudy];
+    studyList = [wordListStudy];
+    save (sprintf('546_words_Study_List_NoAC_%g', i+numLists), 'studyList');
 end

@@ -17,8 +17,8 @@ cd(thePath.list);
 list = load(listName);
 
 theData.item = list.testList(:,1);
-theData.oldNew = [list.testList{:,3}];
-theData.absCon = [list.testList{:,2}];
+theData.oldNew = [list.testList{:,2}];
+%theData.absCon = [list.testList{:,2}];
 
 listLength = length(theData.item);
 

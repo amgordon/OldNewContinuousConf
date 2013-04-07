@@ -19,17 +19,17 @@ cd(thePath.list);
 list = load(listName);
 
 
-theData.cond = list.studyList(:,2);
+%theData.cond = list.studyList(:,2);
 theData.item = list.studyList(:,1);
 
-listLength = length(theData.cond);
+listLength = length(theData.item);
 
 scrsz = get(0,'ScreenSize');
 
 % Diagram of trial
 
-stimTime = 1.75;  % the word
-blankTime = .25;
+stimTime = .85;  % the word
+blankTime = .15;
 behLeadinTime = 4;
 
 

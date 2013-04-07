@@ -92,7 +92,7 @@ S.on = 1;  % Screen now on
 if testType == 1
     saveName = ['ONRMStudy' sName '_' num2str(sNum) '.mat'];
     
-    listName = sprintf('546_words_Study_List_%g.mat', mod(sNum, 16));
+    listName = sprintf('546_words_Study_List_NoAC_%g.mat', mod(sNum, 16));
     respSelData(1) = ON_study(thePath,listName,sName,sNum,S,1, 1);
     
     checkEmpty = isempty(dir (saveName));
@@ -111,7 +111,7 @@ if testType == 1
 elseif testType == 2
     saveName = ['ONRMTest' sName '_' num2str(sNum) '.mat'];
 
-    listName = ['1092_words_Test_List_' num2str(mod(sNum,16)) '_' num2str(1) '.mat'];
+    listName = ['1092_words_Test_List_NoAC_' num2str(mod(sNum,16)) '_' num2str(1) '.mat'];
     ONTestData(1) = ON_test(thePath,listName,sName,sNum,1, S);
 
     checkEmpty = isempty(dir (saveName));
