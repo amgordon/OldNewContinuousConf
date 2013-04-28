@@ -149,7 +149,7 @@ Screen(S.Window,'Flip');
 qKeys(startTime,goTime,S.boxNum);
 
 
-for Trial = 1:listLength
+for Trial = 1079:listLength
 
     ons_start = GetSecs;        
     theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
