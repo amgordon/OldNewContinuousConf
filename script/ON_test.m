@@ -74,14 +74,25 @@ hsn = S.retHandNum;
 
 % for the first block, display instructions
 if RetBlock == 1
-    ins_txt{1} = sprintf('During this phase of the study, you will view a series of words and will be asked to report your confidence concerning whether each word is "Old" (you encountered it in the first phase) or "New" (you did not encounter it in the first phase).  \n \n You can make your confidence judgment by clicking on the scale bar (see example below).  The greater your confidence that an item is old, the farther towards the edge of the bar labeled OLD you should click.  Similarly, the greater your confidence that a word is new, the farther towards the edge of the bar labeled NEW should you click.  \n \n Please distribute your responses across the entire scale bar.');
-    DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 55);
+    ins_txt{1} = sprintf('During this phase of the study, you will view a series of words and will be asked to report your confidence concerning whether each word is "Old" (you encountered it in the first phase) or "New" (you did not encounter it in the first phase).  \n \n You can make your confidence judgment by clicking on the scale arc (see example below).  The greater your confidence that an item is old, the farther towards the edge of the bar labeled OLD you should click.  Similarly, the greater your confidence that a word is new, the farther towards the edge of the bar labeled NEW should you click.  \n \n Please distribute your responses across the entire scale bar.');
+    DrawFormattedText(S.Window, ins_txt{1},'center',100,255, 75);
     
-    Screen('DrawLine', S.Window, S.responseBarColor, 400, 800, scrsz(3)-400, 800, 10);
+    %Screen('DrawLine', S.Window, S.responseBarColor, 400, 800, scrsz(3)-400, 800, 10);
     ShowCursor('CrossHair', S.screenNumber);
-    SetMouse(scrsz(3)/2, 525, S.Window);
-    DrawFormattedText(S.Window,confScale{S.confScaleNum},350,820,S.textColor);
-    DrawFormattedText(S.Window,confScale{3-S.confScaleNum},scrsz(3)-400,820,S.textColor);
+    %SetMouse(scrsz(3)/2, 525, S.Window);
+    %DrawFormattedText(S.Window,confScale{S.confScaleNum},350,820,S.textColor);
+    %DrawFormattedText(S.Window,confScale{3-S.confScaleNum},scrsz(3)-400,820,S.textColor);
+    
+    ResponseRect = [scrsz(3)/2 - 250, scrsz(4)/2+50, scrsz(3)/2 + 250,  scrsz(4)/2+550];
+    MaskingRect = [scrsz(3)/2 - 260, scrsz(4)/2+300, scrsz(3)/2 + 260,  scrsz(4)/2+550];
+    Screen('FrameOval', S.Window, S.responseBarColor, ResponseRect, 10);
+    Screen('FillRect', S.Window,  S.screenColor, MaskingRect); %mask the bottom of the response circle
+   
+    ShowCursor('CrossHair', S.screenNumber);
+    SetMouse(scrsz(3)/2, (scrsz(4)/2 + 100), S.Window);
+    DrawFormattedText(S.Window,confScale{S.confScaleNum},scrsz(3)/2 - 280, scrsz(4)/2+320,S.textColor);
+    DrawFormattedText(S.Window,confScale{3-S.confScaleNum},scrsz(3)/2 + 215, scrsz(4)/2+320,S.textColor);
+    
     Screen('Flip',S.Window);
     AG3getKey('g',S.kbNum);
 end
@@ -167,19 +178,28 @@ for Trial = 1079:listLength
     % Stim
     goTime = goTime + stimTime;
     message = theData.item{Trial};
-    DrawFormattedText(S.Window,message,'center','center',S.textColor);
     
-    % Note: fix these to get rid of magic numbers
-    Screen('DrawLine', S.Window, S.responseBarColor, 400, 600, scrsz(3)-400, 600, 10);
+    
+    % Note: fix these to get rid of magic numbers 
+    ResponseRect = [scrsz(3)/2 - 250, scrsz(4)/2-150, scrsz(3)/2 + 250,  scrsz(4)/2+350];
+    MaskingRect = [scrsz(3)/2 - 260, scrsz(4)/2+100, scrsz(3)/2 + 260,  scrsz(4)/2+350];
+    Screen('FrameOval', S.Window, S.responseBarColor, ResponseRect, 10);
+    Screen('FillRect', S.Window,  S.screenColor, MaskingRect); %mask the bottom of the response circle
+   
+    DrawFormattedText(S.Window,message, 'center', scrsz(4)/2+150, S.textColor);
     ShowCursor('CrossHair', S.screenNumber);
-    SetMouse(scrsz(3)/2, 525, S.Window);
-    DrawFormattedText(S.Window,confScale{S.confScaleNum},350,620,S.textColor);
-    DrawFormattedText(S.Window,confScale{3-S.confScaleNum},scrsz(3)-400,620,S.textColor);
+    SetMouse(scrsz(3)/2, (scrsz(4)/2 + 100), S.Window);
+    DrawFormattedText(S.Window,confScale{S.confScaleNum},scrsz(3)/2 - 280, scrsz(4)/2+120,S.textColor);
+    DrawFormattedText(S.Window,confScale{3-S.confScaleNum},scrsz(3)/2 + 215, scrsz(4)/2+120,S.textColor);
+    
+    responseRad = 250;
     
     Screen(S.Window,'Flip');
     while 1
         [resp, mouseX, mouseY] = GetClicks(S.Window);
-        if (~isempty(resp) && abs(mouseX-scrsz(3)/2)<(scrsz(3) - 800 + 50)/2 && abs(mouseY - 600)<50) % if the mouse was clicked on the bar.
+        rad = sqrt((mouseX-scrsz(3)/2)^2 + (mouseY-(scrsz(4)/2+100))^2);
+        if (~isempty(resp) && abs(rad-responseRad)<10) % if the mouse was clicked on the bar.
+        %if (~isempty(resp))
             HideCursor;
             respTime = GetSecs;
             break
