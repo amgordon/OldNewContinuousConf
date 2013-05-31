@@ -1,0 +1,191 @@
+function theData = ON_testFixedStimTime(thePath,listName,sName, sNum,RetBlock, S)
+
+% This function accepts a list, then loads the images and runs the expt
+% Run AG3.m first, otherwise thePath will be undefined.
+% This function is controlled by BH1run
+%
+% To run this function solo:
+% theData = AG3retrieve(thePath,listName,'testSub',0);
+
+
+
+cd(thePath.list);
+
+list = load(listName);
+
+theData.item = list.testList(:,1);
+theData.oldNew = [list.testList{:,2}];
+
+listLength = length(theData.item);
+
+% preallocate:
+for preall = 1:listLength 
+    theData.num(preall) = preall; 
+    theData.ons(preall) = 0;
+    theData.dur(preall) = 0; 
+    theData.mouseX(preall) = 0;
+    theData.mouseY(preall) = 0;
+    theData.RT(preall) = 0;
+    theData.radians(preall) = 0;
+end
+
+% Diagram of trial
+stimTime = 3.25;  % the word and main response time
+fixTime = .25; % fixation time.  
+behLeadinTime = 4;
+
+% Screen commands
+Screen(S.Window,'FillRect', S.screenColor);
+Screen(S.Window,'Flip');
+
+confScale = {'OLD' 'NEW'};
+
+% for the first block, display instructions
+if RetBlock == 1
+    ins_txt{1} = sprintf('During this phase of the study, you will view a series of words and will be asked to report your confidence concerning whether each word is "Old" (you encountered it in the first phase) or "New" (you did not encounter it in the first phase).  \n \n You can make your confidence judgment by clicking on the scale arc (see example below).  The greater your confidence that an item is old, the farther towards the edge of the bar labeled OLD you should click.  Similarly, the greater your confidence that a word is new, the farther towards the edge of the bar labeled NEW should you click.  \n \n Please distribute your responses across the entire scale bar.');
+    DrawFormattedText(S.Window, ins_txt{1},'center',100,255, 75);
+    
+    ShowCursor('CrossHair', S.screenNumber);
+    
+    Screen('FrameOval', S.Window, S.responseBarColor, S.ResponseRectIns, S.respBarThickness);
+    Screen('FillRect', S.Window,  S.screenColor, S.MaskingRectIns); %mask the bottom of the response circle
+   
+    ShowCursor('CrossHair', S.screenNumber);
+    SetMouse(S.responseCenter(1), S.responseCenter(2), S.Window);
+    DrawFormattedText(S.Window,confScale{S.confScaleNum},S.respTextInsLeft(1), S.respTextInsLeft(2), S.textColor);
+    DrawFormattedText(S.Window,confScale{3-S.confScaleNum},S.respTextInsRight(1), S.respTextInsRight(2),S.textColor);
+    
+    Screen('Flip',S.Window);
+    AG3getKey('g',S.kbNum);
+end
+
+
+
+% set up information for saving file.
+cd(S.subData);
+matName = ['Acc1_retrieve_' num2str(sNum), '_' sName 'out(1).mat'];
+checkEmpty = isempty(dir (matName));
+suffix = 1;
+while checkEmpty ~=1
+    suffix = suffix+1;
+    matName = ['Acc1_retrieve_' num2str(sNum), '_' sName 'out(' num2str(suffix) ').mat'];
+    checkEmpty = isempty(dir (matName));
+end
+diary ([matName '_diary']);
+
+
+
+
+% screen of press g to begin
+HideCursor;
+message = 'Press g to begin!';
+[hPos, vPos] = AG3centerText(S.Window,S.screenNumber,message);
+Screen(S.Window,'DrawText',message, hPos, vPos, S.textColor);
+Screen(S.Window,'Flip');
+AG3getKey('g',S.kbNum);
+    
+
+% initial timing information
+goTime = 0;
+startTime = GetSecs;
+
+
+
+% present initial  fixation
+goTime = goTime + behLeadinTime;
+
+
+DrawFormattedText(S.Window,'+','center','center',S.textColor);
+Screen(S.Window,'Flip');
+qKeys(startTime,goTime,S.boxNum);
+
+ons_begin_study = GetSecs;
+
+for Trial = 1:listLength
+
+    ons_start = GetSecs;        
+    theData.ons(Trial) = GetSecs - startTime; %precise onset of trial presentation
+    
+    % Fixation
+    goTime = fixTime;
+
+    Screen(S.Window,'Flip');
+    [keys RT] = qKeys(ons_start,goTime,S.boxNum); 
+    
+
+    % draw response bar and labels
+    Screen('FrameOval', S.Window, S.responseBarColor, S.ResponseRect, S.respBarThickness);
+    Screen('FillRect', S.Window,  S.screenColor, S.MaskingRect); %mask the bottom of the response circle
+    DrawFormattedText(S.Window,confScale{S.confScaleNum}, S.respTextLeft(1), S.respTextLeft(2), S.textColor);
+    DrawFormattedText(S.Window,confScale{3-S.confScaleNum}, S.respTextRight(1), S.respTextRight(2), S.textColor);
+    
+    % draw stim
+    message = theData.item{Trial};
+    DrawFormattedText(S.Window,message, 'center', S.respStimY, S.textColor);
+    
+    
+    % set the mouse
+    ShowCursor('CrossHair', S.screenNumber);
+    SetMouse(S.responseCenter(1), S.responseCenter(2), S.Window);
+
+    Screen(S.Window,'Flip');
+    
+    % timing stuff
+    startRTRecord = GetSecs;
+    desiredEndTime = Trial*(stimTime + fixTime);
+    
+    % for length of trial, get the mouse coordinates
+    while (GetSecs - ons_begin_study)<desiredEndTime
+        [mouseX, mouseY, buttons] = GetMouse(S.Window);
+        buttonPressed = sum(buttons)>0;
+        rad = sqrt((mouseX-S.responseCenter(1))^2 + (mouseY-S.responseCenter(2))^2);
+        
+        % if the mouse was clicked on the bar, store information, hide the
+        % mouse, and break out of the loop
+        if (buttonPressed && abs(rad-S.responseRad)<S.respBarThickness) 
+            HideCursor;
+            respTime = GetSecs - startRTRecord;
+            mouseXRec = mouseX;
+            mouseYRec = mouseY;
+            
+            xUnit = (mouseX - S.responseCenter(1))/S.responseRad;
+            yUnit = (mouseY - S.responseCenter(2))/S.responseRad;
+            
+            % the y coords are multiplied by -1 because coords go from top
+            % (lower numbers) to bottom (larger numbers)
+            radians = cart2pol(xUnit, -1*yUnit); 
+            
+            % record response data
+            theData.RT(Trial) = respTime;
+            theData.num(Trial) = Trial;
+            theData.dur(Trial) = GetSecs - ons_start;
+            theData.mouseX(Trial) = mouseXRec;
+            theData.mouseY(Trial) = mouseYRec;
+            theData.radians(Trial) = radians;
+            break
+        end
+        WaitSecs(.005);
+    end
+    
+    % in case response was pressed early, finish the trial
+    while (GetSecs - ons_begin_study)<desiredEndTime
+        WaitSecs(.005);
+    end
+
+    % save
+    cmd = ['save ' matName];
+    eval(cmd);
+end
+
+
+DrawFormattedText(S.Window,'Saving...','center','center', [100 100 100]);
+
+cmd = ['save ' matName];
+eval(cmd);
+
+Screen(S.Window,'FillRect', S.screenColor);	% Blank Screen
+Screen(S.Window,'Flip');
+
+ListenChar(1); % tell the command line to listen to key responses again.
+Priority(0);
+

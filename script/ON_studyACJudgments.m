@@ -21,6 +21,7 @@ list = load(listName);
 
 %theData.cond = list.studyList(:,2);
 theData.item = list.studyList(:,1);
+theData.varITI = list.studyList(:,3);
 
 listLength = length(theData.item);
 
@@ -28,38 +29,32 @@ scrsz = get(0,'ScreenSize');
 
 % Diagram of trial
 
+behLeadinTime = 4;
 stimTime = 2.85;  % the word
 blankTime = .15;
-behLeadinTime = 4;
-
+dotTime = 1;
+totalTime = 6;
 
 Screen(S.Window,'FillRect', S.screenColor);
 Screen(S.Window,'Flip');
 cd(thePath.stim);
 
-
 % preallocate:
 trialcount = 0;
 for preall = startTrial:listLength
-        theData.onset(preall) = 0;
-        theData.dur(preall) =  0;
-        %theData.judgeResp{preall} = 'noanswer';
-        %theData.judgeRT{preall} = 0;
-        theData.stimResp{preall} = 'noanswer';
-        theData.stimRT{preall} = 0;
-        theData.presentedTask{preall} = 'noanswer';
-        theData.confActual{preall} = 'noanswer';
+    theData.onset(preall) = 0;
+    theData.dur(preall) =  0;
+    theData.stimResp{preall} = 'noanswer';
+    theData.stimRT{preall} = 0;
+    theData.presentedTask{preall} = 'noanswer';
+    theData.confActual{preall} = 'noanswer';
 end
 
 hands = {'Left','Right'};
 
-if S.scanner == 2
-    fingers = {'q', 'p'};
-elseif S.scanner ==1;
-    fingers = {'1!', '5%'};
-end
 
 hsn = S.encHandNum;
+
 % for the first block, display instructions
 if EncBlock == 1
 
@@ -137,25 +132,38 @@ for Trial = 1:listLength
        
        theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
        
-       
        % Stim
-       desiredTime = (Trial)*stimTime + (Trial-1)*blankTime;
-       curTime = GetSecs - baselineTime;
-       goTime = desiredTime - curTime - 1/120;
-       
+       goTime = stimTime;
        stim = theData.item{Trial};
        DrawFormattedText(S.Window,stim,'center','center',S.textColor);
        Screen(S.Window,'Flip');
-       [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum); % not collecting keys, just a delay
+       [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum); 
        theData.stimResp{Trial} = keys1;
        theData.stimRT{Trial} = RT1;
        
-       % ITI
-       goTime = goTime + blankTime;
+       % variable ITI
+       goTime = goTime + theData.varITI{Trial};
+       Screen('FrameOval', S.Window, S.textColor, S.DotDetectionRect, S.respBarThickness);
+       Screen(S.Window,'Flip');
+       AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
+       
+       % dot detection
+       goTime = goTime + dotTime;
+       Screen('FrameOval', S.Window, S.responseBarColor, S.DotDetectionRect, S.respBarThickness);
+       Screen(S.Window,'Flip');
+       [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
+       theData.stimResp{Trial} = keys1;
+       theData.stimRT{Trial} = RT1;
+       
+       % fixed ITI
+       desiredTime = (Trial)*totalTime;
+       curTime = GetSecs - baselineTime;
+       goTime = goTime + desiredTime - curTime - 1/120;
        Screen(S.Window,'Flip');
        AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
        theData.dur(Trial) = GetSecs - ons_start;  %records precise trial duration
        
+       theData.dur(Trial) = GetSecs - ons_start;  %records precise trial duration
        cmd = ['save ' matName];
        eval(cmd);
        fprintf('%d\n',Trial);
