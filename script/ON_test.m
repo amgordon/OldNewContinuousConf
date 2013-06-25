@@ -167,11 +167,11 @@ for Trial = 1:listLength
     
     % Fixation
     goTime = fixTime;
-    Screen('DrawLine', S.Window, S.responseBarColor, 400, 600, scrsz(3)-400, 600, 10);
-    ShowCursor('CrossHair', S.screenNumber);
-    SetMouse(scrsz(3)/2, 525, S.Window);
-    DrawFormattedText(S.Window,confScale{S.confScaleNum},350,620,S.textColor);
-    DrawFormattedText(S.Window,confScale{3-S.confScaleNum},scrsz(3)-400,620,S.textColor);
+    %Screen('DrawLine', S.Window, S.responseBarColor, 400, 600, scrsz(3)-400, 600, 10);
+    %ShowCursor('CrossHair', S.screenNumber);
+    %SetMouse(scrsz(3)/2, 525, S.Window);
+    %DrawFormattedText(S.Window,confScale{S.confScaleNum},350,620,S.textColor);
+    %DrawFormattedText(S.Window,confScale{3-S.confScaleNum},scrsz(3)-400,620,S.textColor);
     Screen(S.Window,'Flip');
     [keys RT] = qKeys(ons_start,goTime,S.boxNum); 
     
