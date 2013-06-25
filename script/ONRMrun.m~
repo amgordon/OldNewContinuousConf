@@ -59,8 +59,18 @@ else
 end
 
 %   Condition numbers
-S.confScaleNum = 2-mod(sNum,2); % 1 2 1 2
-S.encHandNum = 2 - mod(ceil(sNum/2),2); % 1 1 2 2 1 1 2 2
+%-------------------------------
+% listNum is 1-8, based on sNum (e.g. if sNum=11, listNum=3)
+listNum = mod(sNum-1,12)+1;
+
+% encCondNum is 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 2 2 2...
+S.encCondNum = 2 - mod(ceil(sNum/8),2);
+
+% respSelCondNum is 1 2 1 2 1 2 1 2
+S.confScaleNum = 2-mod(sNum,2);
+S.encHandNum = 2-mod(sNum,2);
+S.retHandNum = 2-mod(ceil(sNum/2),2);
+S.respSelHandNum = 2-mod(sNum,2);
 
 
 %-------------------------------
@@ -79,7 +89,6 @@ S.on = 1;  % Screen now on
 S.scrsz = get(0,'ScreenSize');
 
 %% info for study script
-S.DotDetectionRect = [S.scrsz(3)/2 - 10, S.scrsz(4)/2-10, S.scrsz(3)/2 + 10,  S.scrsz(4)/2+10];
 
 %% info for test script
 S.ResponseRectIns = [S.scrsz(3)/2 - 250, S.scrsz(4)/2+50, S.scrsz(3)/2 + 250,  S.scrsz(4)/2+550];

@@ -28,7 +28,7 @@ scrsz = get(0,'ScreenSize');
 
 % Diagram of trial
 
-stimTime = .85;  % the word
+stimTime = 1.85;  % the word
 blankTime = .15;
 behLeadinTime = 4;
 
@@ -146,7 +146,7 @@ for Trial = 1:listLength
        stim = theData.item{Trial};
        DrawFormattedText(S.Window,stim,'center','center',S.textColor);
        Screen(S.Window,'Flip');
-       [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum); % not collecting keys, just a delay
+       [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
        theData.stimResp{Trial} = keys1;
        theData.stimRT{Trial} = RT1;
        
