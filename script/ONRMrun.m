@@ -19,7 +19,7 @@ end
 if nargin<4
     testType = 0;
     while ~ismember(testType,[1,2,3])
-        testType = input('Which task?  ON_S[1] ON_T[2] or ON_L[3]? ');
+        testType = input('Which task?  ON_S[1] ON_T[2] or ON_P[3]? ');
     end
 end
 
@@ -103,8 +103,8 @@ S.respStimY = S.scrsz(4)/2+150;
 if testType == 1
     saveName = ['ONRMStudy' sName '_' num2str(sNum) '.mat'];
     
-    listName = sprintf('546_words_Study_List_NoAC_%g.mat', mod(sNum, 16));
-    respSelData(1) = ON_study(thePath,listName,sName,sNum,S,1, 1);
+    listName = sprintf('450_Study_PicList_%g.mat', mod(sNum, 16));
+    respSelData(1) = ON_picStudy(thePath,listName,sName,sNum,S,1, 1);
     
     checkEmpty = isempty(dir (saveName));
     suffix = 1;
@@ -122,8 +122,8 @@ if testType == 1
 elseif testType == 2
     saveName = ['ONRMTest' sName '_' num2str(sNum) '.mat'];
 
-    listName = ['1092_words_Test_List_NoAC_' num2str(mod(sNum,16)) '_' num2str(1) '.mat'];
-    ONTestData(1) = ON_testFixedStimTime(thePath,listName,sName,sNum,1, S);
+    listName = ['900_Test_PicList_' num2str(mod(sNum,16)) '_' num2str(1) '.mat'];
+    ONTestData(1) = ON_picTest(thePath,listName,sName,sNum,1, S);
 
     checkEmpty = isempty(dir (saveName));
     suffix = 1;
@@ -140,24 +140,23 @@ elseif testType == 2
     
 elseif testType == 3
     
-    saveName = ['RMLoc' sName '_' num2str(sNum) '.mat'];
-
-    for RMLocBlock = S.startBlock:2
-        %listName = ['Test_List_' num2str(listNum)  '.mat'];
-        listName = ['RM_List_' num2str(mod(sNum,16)) '_' num2str(RMLocBlock) '.mat'];
-        RMLocData(RMLocBlock) = RM_Loc(thePath,listName,sName,sNum,RMLocBlock, S);
-    end
-
+    saveName = ['ONRMStudyPrac' sName '_' num2str(sNum) '.mat'];
+    
+    listName = sprintf('Study_PicListPrac_%g.mat', mod(sNum, 16));
+    pracData(1) = ON_picStudy(thePath,listName,sName,sNum,S,1, 1);
+    
     checkEmpty = isempty(dir (saveName));
     suffix = 1;
-
+    
     while checkEmpty ~=1
         suffix = suffix+1;
-        saveName = ['RMLoc' sName '_' num2str(sNum) '(' num2str(suffix) ')' '.mat'];
+        saveName = ['ONRMStudyPrac' sName '_' num2str(sNum) '(' num2str(suffix) ')' '.mat'];
         checkEmpty = isempty(dir (saveName));
     end
 
     eval(['save ' saveName]);
+    % Output file for each block is saved within BH1test; full file saved
+    % here
 end
 
 message = 'End of script. Press any key to exit.';
