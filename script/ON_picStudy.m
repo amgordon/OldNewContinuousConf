@@ -151,8 +151,7 @@ for Trial = 1:listLength
        ons_start = GetSecs;
        
        theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
-       
-       
+              
        % Stim
        goTime = theData.targetOns(Trial);
        Screen('DrawTexture', S.Window, picPtrs(Trial));
@@ -164,7 +163,7 @@ for Trial = 1:listLength
        % Target
        desiredTime = (Trial)*stimTime + (Trial-1)*blankTime;
        curTime = GetSecs - baselineTime;
-       goTime = desiredTime - curTime - 1/120;
+       goTime = goTime + desiredTime - curTime - 1/120;
        
        Screen('DrawTexture', S.Window, picPtrs(Trial));
      
