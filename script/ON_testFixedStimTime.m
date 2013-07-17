@@ -91,7 +91,7 @@ startTime = GetSecs;
 goTime = goTime + behLeadinTime;
 DrawFormattedText(S.Window,'+','center','center',S.textColor);
 Screen(S.Window,'Flip');
-qKeys(startTime,goTime,S.boxNum);
+qkeys(startTime,goTime,S.boxNum);
 ons_begin_study = GetSecs;
 
 % cycle through trials
@@ -104,7 +104,7 @@ for Trial = 1:listLength
     goTime = fixTime;
 
     Screen(S.Window,'Flip');
-    [keys RT] = qKeys(ons_start,goTime,S.boxNum); 
+    [keys RT] = qkeys(ons_start,goTime,S.boxNum); 
     
 
     % draw response bar and labels
