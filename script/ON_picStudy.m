@@ -78,7 +78,7 @@ end
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase, you will see a series of pictures presented on the screen.  During some trials you will see a red bar appear on the screen.  Whenever you see the red bar, please press the space bar as soon as possible.  If you do not see the red bar, you do not need to make any response.');
+    ins_txt{1} =  sprintf('In this phase, you will see a series of pictures presented on the screen.  At some time, you will see a yellow circle appear on the screen.  Whenever you see the circle, please press the space bar as soon as possible.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
