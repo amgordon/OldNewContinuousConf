@@ -70,6 +70,7 @@ HideCursor;
 S.screenNumber = max(Screen('Screens'));
 S.screenColor = 0;
 S.textColor = 255;
+S.flashingRectColor = 100;
 S.responseBarColor = [0 0 255];
 S.blinkColor  = [0 0 0];
 [S.Window, S.myRect] = Screen(S.screenNumber, 'OpenWindow', S.screenColor, [], 32);
