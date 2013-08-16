@@ -164,8 +164,7 @@ for Trial = 1:listLength
        Screen(S.Window,'Flip');
        theData.stimTime(Trial) = GetSecs;
        AG3recordKeys(ons_start,goTime,S.boxNum);
-       theData.earlyResp{Trial} = keys1;
-       theData.earlyRT{Trial} = RT1;
+
       
        % Post-stim blank time
        Screen(S.Window,'Flip');
@@ -196,8 +195,9 @@ for Trial = 1:listLength
      
        Screen(S.Window,'Flip'); 
       
-       AG3recordKeys(ons_start,goTime,S.boxNum);
-
+       [keys2 RT2] = AG3recordKeys(ons_start,goTime,S.boxNum);
+       theData.judgeResp{Trial} = keys2;
+       theData.judgeRT{Trial} = RT2;
        theData.dur(Trial) = GetSecs - ons_start;  %records precise trial duration
        
        cmd = ['save ' matName];
