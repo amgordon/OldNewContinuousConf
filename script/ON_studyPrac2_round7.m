@@ -50,7 +50,7 @@ for preall = startTrial:listLength
         theData.confActual{preall} = 'noanswer';
 end
 
-toneSet = {'tone1.wav' 'tone2.wav' 'tone3.wav' 'tone4.wav'};
+toneSet = {'tone1.wav' 'tone3.wav' 'tone4.wav'};
 % %preload sounds
 for L=1:length(toneSet)
     wavfilenameCue = fullfile(thePath.stim, toneSet{L});

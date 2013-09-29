@@ -7,7 +7,7 @@ numItems = 1092;
 
 NStudy = numItems/2;
 NTones = 4;
-toneSet = {1 2 3 4};
+toneSet = {1 2 3};
 
 for i = 1:numLists;
     thisShuffleIdx = randperm(testTotalLength);
@@ -44,7 +44,7 @@ for i = 1:numLists;
     wordListStudy = wordList_all(oldNew_all==1);
     %absConStudy = absCon_all(oldNew_all==1);
     for t=1:length(wordListStudy)
-        thisShuffle = Shuffle(1:4);
+        thisShuffle = Shuffle(1:3);
         if t>1
             if toneIdxStudy(t-1) == thisShuffle(1)
                 toneIdxStudy(t) = thisShuffle(2);
