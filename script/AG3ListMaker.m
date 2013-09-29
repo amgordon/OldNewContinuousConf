@@ -5,6 +5,10 @@ numLists = 8;
 numSess = 1;
 numItems = 1092;
 
+NStudy = numItems/2;
+NTones = 4;
+toneSet = {1 2 3 4};
+
 for i = 1:numLists;
     thisShuffleIdx = randperm(testTotalLength);
     wordList_all = y.wordListNoAbsCon(thisShuffleIdx,1);
@@ -39,13 +43,26 @@ for i = 1:numLists;
     
     wordListStudy = wordList_all(oldNew_all==1);
     %absConStudy = absCon_all(oldNew_all==1);
+    for t=1:length(wordListStudy)
+        thisShuffle = Shuffle(1:4);
+        if t>1
+            if toneIdxStudy(t-1) == thisShuffle(1)
+                toneIdxStudy(t) = thisShuffle(2);
+            else
+                toneIdxStudy(t) = thisShuffle(1);
+            end
+        elseif t==1
+            toneIdxStudy(t) = thisShuffle(1);
+        end
+    end
+    toneListStudy = toneSet(toneIdxStudy);
     
     p = randperm(length(wordListStudy));
     wordListStudy = wordListStudy(p);
     %absConStudy = absConStudy(p);
     
     %studyList = [wordListStudy absConStudy];
-    studyList = [wordListStudy];
+    studyList = [wordListStudy toneListStudy'];
     
     save (sprintf('546_words_Study_List_NoAC_%g', i), 'studyList');
     
@@ -55,6 +72,6 @@ for i = 1:numLists;
     wordListStudy = wordListStudy(p);
     %absConStudy = absConStudy(p);
     %studyList = [wordListStudy absConStudy];
-    studyList = [wordListStudy];
+    studyList = [wordListStudy toneListStudy'];
     save (sprintf('546_words_Study_List_NoAC_%g', i+numLists), 'studyList');
 end
