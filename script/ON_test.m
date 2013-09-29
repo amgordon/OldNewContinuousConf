@@ -70,7 +70,6 @@ elseif S.scanner==1
     fingers = {'1!', '5%'};
 end
 
-hsn = S.retHandNum;
 
 % for the first block, display instructions
 if RetBlock == 1
@@ -157,7 +156,7 @@ end
 
 DrawFormattedText(S.Window,'+','center','center',S.textColor);
 Screen(S.Window,'Flip');
-qKeys(startTime,goTime,S.boxNum);
+qkeys(startTime,goTime,S.boxNum);
 
 
 for Trial = 1:listLength
@@ -173,7 +172,7 @@ for Trial = 1:listLength
     %DrawFormattedText(S.Window,confScale{S.confScaleNum},350,620,S.textColor);
     %DrawFormattedText(S.Window,confScale{3-S.confScaleNum},scrsz(3)-400,620,S.textColor);
     Screen(S.Window,'Flip');
-    [keys RT] = qKeys(ons_start,goTime,S.boxNum); 
+    [keys RT] = qkeys(ons_start,goTime,S.boxNum); 
     
     % Stim
     goTime = goTime + stimTime;

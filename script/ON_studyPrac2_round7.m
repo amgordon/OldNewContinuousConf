@@ -1,5 +1,5 @@
 
-function theData = ON_picStudy(thePath,listName,sName, sNum, S,EncBlock, startTrial)
+function theData = ON_studyPrac2_round7(thePath,listName,sName, sNum, S,EncBlock, startTrial)
 
 % theData = AG3encode(thePath,listName,sName,S,startTrial);
 % This function accepts a list, then loads the images and runs the expt
@@ -18,23 +18,19 @@ cd(thePath.list);
 
 list = load(listName);
 
-theData.item = list.studyList(:,1);
-theData.targetOns = vertcat(list.studyList{:,2});
-theData.targetX = vertcat(list.studyList{:,3});
-theData.targetY = vertcat(list.studyList{:,4});
 
-listLength = length(theData.item);
+theData.tone = [list.studyList{:,1}];
+
+listLength = length(theData.tone);
 
 scrsz = get(0,'ScreenSize');
 
 % Diagram of trial
 
-stimTime = 5;  % the word
-picTime = 2;
-blankTime = .75;
+stimTime = 1.85;  % the word
+blankTime = 1.05;
 behLeadinTime = 4;
-targetTime = .25;
-postStimBlankTime = .75 - 2/3;
+soundTime = 1;
 
 Screen(S.Window,'FillRect', S.screenColor);
 Screen(S.Window,'Flip');
@@ -54,6 +50,15 @@ for preall = startTrial:listLength
         theData.confActual{preall} = 'noanswer';
 end
 
+toneSet = {'tone1.wav' 'tone2.wav' 'tone3.wav' 'tone4.wav'};
+% %preload sounds
+for L=1:length(toneSet)
+    wavfilenameCue = fullfile(thePath.stim, toneSet{L});
+    [yCue, cue.freq{L}] = wavread(wavfilenameCue);
+    cue.wavedata{L} = yCue(:,1)';
+    cue.nrchannels{L} = size(cue.wavedata,1); % Number of rows == number of channels.
+end
+
 hands = {'Left','Right'};
 
 if S.scanner == 2
@@ -63,27 +68,10 @@ elseif S.scanner ==1;
 end
 
 hsn = S.encHandNum;
-
-cd (thePath.stim);
-for n=1:listLength
-    picName = theData.item{n};
-    pic = imread(picName);
-    picPtrs(n) = Screen('MakeTexture', S.Window, pic);   
-    
-    pctLoaded = round(100*(n/listLength));
-    pctMsg = sprintf('pictures %g percent loaded', pctLoaded);
-    DrawFormattedText(S.Window,pctMsg,'center','center',S.textColor);
-    Screen(S.Window, 'Flip');
-end
-
-flashingPtr = n+1;
-pic(:) = S.flashingRectColor;
-picPtrs(flashingPtr) = Screen('MakeTexture', S.Window, pic);
-
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase, you will see a series of pictures presented on the screen.  After each picture is presented, you will see a grey square flash on the screen.  As soon as you see the grey square, please press the space bar as quickly as you can.');
+    ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Now that you have learned which key response goes with each tone, your job is to press the appropriate key associated with each tone.  You will be informed whether your response is correct or incorrect for each trial.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
@@ -150,54 +138,48 @@ Screen(S.Window,'Flip');
 AG3recordKeys(startTime,goTime,S.kbNum);  % not collecting keys, just a delay
 baselineTime = GetSecs;
 
-
 for Trial = 1:listLength
        trialcount = trialcount + 1;
        
        ons_start = GetSecs;
        
        theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
-              
+       
+       
+       % Cue Sound
+       S.pahandle = PsychPortAudio('Open', [], [], 0, cue.freq{theData.tone(Trial)}, cue.nrchannels{theData.tone(Trial)});
+       soundStartTime = GetSecs;
+       goTime = soundTime;
+       thisSound = cue.wavedata{theData.tone(Trial)};
+       soundEndTime = soundStartTime+soundTime;
+       PsychPortAudio('FillBuffer', S.pahandle, thisSound);
+       PsychPortAudio('Start', S.pahandle, 1, 0, 1, soundEndTime);
+       
        % Stim
-       goTime = picTime;%theData.targetOns(Trial);
-       Screen('DrawTexture', S.Window, picPtrs(Trial));
-       Screen(S.Window,'Flip');
-       theData.stimTime(Trial) = GetSecs;
-       AG3recordKeys(ons_start,goTime,S.boxNum);
-
-      
-       % Post-stim blank time
-       Screen(S.Window,'Flip');
-       goTime = goTime+postStimBlankTime;
-       AG3recordKeys(ons_start,goTime,S.boxNum);
+       desiredTime = (Trial)*stimTime + (Trial-1)*blankTime;
+       curTime = GetSecs - baselineTime;
+       goTime = desiredTime - curTime - 1/120;
        
-       % Pre-target blank time
-       Screen(S.Window,'Flip');
-       theData.preTargTime(Trial) = GetSecs;
-       goTime = goTime+theData.targetOns(Trial);
-       AG3recordKeys(ons_start,goTime,S.boxNum);
-       
-       % Target
-       Screen('DrawTexture', S.Window, picPtrs(flashingPtr));
+       stim = S.respLetters{theData.tone(Trial)};
        
        Screen(S.Window,'Flip');
-       theData.targetTime(Trial) = GetSecs;
-       goTime = goTime + targetTime;
        [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
-       
        theData.stimResp{Trial} = keys1;
        theData.stimRT{Trial} = RT1;
-       
-       % Post-target Time
-       desiredTime = (Trial)*stimTime;
-       curTime = GetSecs - baselineTime;
-       goTime = goTime + desiredTime - curTime - 1/120;       
-     
-       Screen(S.Window,'Flip'); 
       
-       [keys2 RT2] = AG3recordKeys(ons_start,goTime,S.boxNum);
-       theData.judgeResp{Trial} = keys2;
-       theData.judgeRT{Trial} = RT2;
+
+       % ITI
+       goTime = goTime + blankTime;
+      
+       if strcmp(keys1(1), stim)
+           DrawFormattedText(S.Window,'correct','center','center',S.textColor);
+       else
+           DrawFormattedText(S.Window,'incorrect','center','center',S.textColor);
+       end
+       Screen(S.Window,'Flip');
+       AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
+       
+       
        theData.dur(Trial) = GetSecs - ons_start;  %records precise trial duration
        
        cmd = ['save ' matName];
