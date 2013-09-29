@@ -18,8 +18,8 @@ end
 
 if nargin<4
     testType = 0;
-    while ~ismember(testType,[1,2,3])
-        testType = input('Which task?  ON_S[1] ON_T[2] or ON_P[3]? ');
+    while ~ismember(testType,[1,2,3,4])
+        testType = input('Which task?  ON_S[1] ON_T[2] ON_P1[3] ON_P1[4]? ');
     end
 end
 
@@ -78,6 +78,7 @@ Screen('TextSize', S.Window, 30);
 Screen('TextStyle', S.Window, 1);
 S.on = 1;  % Screen now on
 S.scrsz = get(0,'ScreenSize');
+S.respLetters = {'j' 'k' 'l'};
 
 %% info for study script
 S.DotDetectionRect = [S.scrsz(3)/2 - 10, S.scrsz(4)/2-10, S.scrsz(3)/2 + 10,  S.scrsz(4)/2+10];
@@ -104,8 +105,8 @@ S.respStimY = S.scrsz(4)/2+150;
 if testType == 1
     saveName = ['ONRMStudy' sName '_' num2str(sNum) '.mat'];
     
-    listName = sprintf('450_Study_PicList_%g.mat', mod(sNum, 16));
-    respSelData(1) = ON_picStudy(thePath,listName,sName,sNum,S,1, 1);
+    listName = sprintf('546_words_Study_List_NoAC_%g.mat', mod(sNum, 16));
+    respSelData(1) = ON_study_round7(thePath,listName,sName,sNum,S,1, 1);
     
     checkEmpty = isempty(dir (saveName));
     suffix = 1;
@@ -123,8 +124,8 @@ if testType == 1
 elseif testType == 2
     saveName = ['ONRMTest' sName '_' num2str(sNum) '.mat'];
 
-    listName = ['900_Test_PicList_' num2str(mod(sNum,16)) '_' num2str(1) '.mat'];
-    ONTestData(1) = ON_picTest(thePath,listName,sName,sNum,1, S);
+    listName = ['1092_words_Test_List_NoAC_' num2str(mod(sNum,16)) '_' num2str(1) '.mat'];
+    ONTestData(1) = ON_test(thePath,listName,sName,sNum,1, S);
 
     checkEmpty = isempty(dir (saveName));
     suffix = 1;
@@ -141,10 +142,29 @@ elseif testType == 2
     
 elseif testType == 3
     
-    saveName = ['ONRMStudyPrac' sName '_' num2str(sNum) '.mat'];
+    saveName = ['ON_studyPrac1_round7' sName '_' num2str(sNum) '.mat'];
     
-    listName = sprintf('Study_PicListPrac_%g.mat', mod(sNum, 16));
-    pracData(1) = ON_picStudy(thePath,listName,sName,sNum,S,1, 1);
+    listName = '546_words_Study_List_NoAC_prac1.mat';
+    pracData(1) = ON_studyPrac1_round7(thePath,listName,sName,sNum,S,1, 1);
+    
+    checkEmpty = isempty(dir (saveName));
+    suffix = 1;
+    
+    while checkEmpty ~=1
+        suffix = suffix+1;
+        saveName = ['ONRMStudyPrac' sName '_' num2str(sNum) '(' num2str(suffix) ')' '.mat'];
+        checkEmpty = isempty(dir (saveName));
+    end
+
+    eval(['save ' saveName]);
+    % Output file for each block is saved within BH1test; full file saved
+    % here
+elseif testType == 4
+    
+    saveName = ['ON_studyPrac2_round7' sName '_' num2str(sNum) '.mat'];
+    
+    listName = '546_words_Study_List_NoAC_prac2.mat';
+    pracData(1) = ON_studyPrac2_round7(thePath,listName,sName,sNum,S,1, 1);
     
     checkEmpty = isempty(dir (saveName));
     suffix = 1;

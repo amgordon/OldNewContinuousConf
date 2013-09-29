@@ -1,5 +1,5 @@
 
-function theData = ON_picStudy(thePath,listName,sName, sNum, S,EncBlock, startTrial)
+function theData = ON_picStudy_round7(thePath,listName,sName, sNum, S,EncBlock, startTrial)
 
 % theData = AG3encode(thePath,listName,sName,S,startTrial);
 % This function accepts a list, then loads the images and runs the expt
@@ -177,16 +177,7 @@ for Trial = 1:listLength
        goTime = goTime+theData.targetOns(Trial);
        AG3recordKeys(ons_start,goTime,S.boxNum);
        
-       % Target
-       Screen('DrawTexture', S.Window, picPtrs(flashingPtr));
-       
-       Screen(S.Window,'Flip');
-       theData.targetTime(Trial) = GetSecs;
-       goTime = goTime + targetTime;
-       [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
-       
-       theData.stimResp{Trial} = keys1;
-       theData.stimRT{Trial} = RT1;
+   
        
        % Post-target Time
        desiredTime = (Trial)*stimTime;

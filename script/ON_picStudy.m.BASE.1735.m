@@ -1,5 +1,5 @@
 
-function theData = ON_picStudy(thePath,listName,sName, sNum, S,EncBlock, startTrial)
+function theData = ON_study(thePath,listName,sName, sNum, S,EncBlock, startTrial)
 
 % theData = AG3encode(thePath,listName,sName,S,startTrial);
 % This function accepts a list, then loads the images and runs the expt
@@ -29,12 +29,10 @@ scrsz = get(0,'ScreenSize');
 
 % Diagram of trial
 
-stimTime = 5;  % the word
-picTime = 2;
-blankTime = .75;
+stimTime = 2.85;  % the word
+blankTime = .15;
 behLeadinTime = 4;
-targetTime = .25;
-postStimBlankTime = .75 - 2/3;
+
 
 Screen(S.Window,'FillRect', S.screenColor);
 Screen(S.Window,'Flip');
@@ -76,14 +74,11 @@ for n=1:listLength
     Screen(S.Window, 'Flip');
 end
 
-flashingPtr = n+1;
-pic(:) = S.flashingRectColor;
-picPtrs(flashingPtr) = Screen('MakeTexture', S.Window, pic);
 
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase, you will see a series of pictures presented on the screen.  After each picture is presented, you will see a grey square flash on the screen.  As soon as you see the grey square, please press the space bar as quickly as you can.');
+    ins_txt{1} =  sprintf('In this phase, you will see a series of pictures presented on the screen.  During some trials you will see a red bar appear on the screen.  Whenever you see the red bar, please press the space bar as soon as possible.  If you do not see the red bar, you do not need to make any response.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
@@ -150,54 +145,47 @@ Screen(S.Window,'Flip');
 AG3recordKeys(startTime,goTime,S.kbNum);  % not collecting keys, just a delay
 baselineTime = GetSecs;
 
-
 for Trial = 1:listLength
        trialcount = trialcount + 1;
        
        ons_start = GetSecs;
        
        theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
-              
+       
+       
        % Stim
-       goTime = picTime;%theData.targetOns(Trial);
+       goTime = theData.targetOns(Trial);
        Screen('DrawTexture', S.Window, picPtrs(Trial));
        Screen(S.Window,'Flip');
-       theData.stimTime(Trial) = GetSecs;
-       AG3recordKeys(ons_start,goTime,S.boxNum);
-
-      
-       % Post-stim blank time
-       Screen(S.Window,'Flip');
-       goTime = goTime+postStimBlankTime;
-       AG3recordKeys(ons_start,goTime,S.boxNum);
-       
-       % Pre-target blank time
-       Screen(S.Window,'Flip');
-       theData.preTargTime(Trial) = GetSecs;
-       goTime = goTime+theData.targetOns(Trial);
-       AG3recordKeys(ons_start,goTime,S.boxNum);
+       [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
+       theData.earlyResp{Trial} = keys1;
+       theData.earlyRT{Trial} = RT1;
        
        % Target
-       Screen('DrawTexture', S.Window, picPtrs(flashingPtr));
+       desiredTime = (Trial)*stimTime + (Trial-1)*blankTime;
+       curTime = GetSecs - baselineTime;
+       goTime = desiredTime - curTime - 1/120;
+       
+       Screen('DrawTexture', S.Window, picPtrs(Trial));
+     
+       oval1 = round([S.scrsz(3)/2  - 180 + 360*theData.targetX(Trial) - 10, S.scrsz(4)/2  - 180 + 360*theData.targetY(Trial) - 10, ...
+           S.scrsz(3)/2  - 180 + 360*theData.targetX(Trial) + 10, S.scrsz(4)/2  - 180 + 360*theData.targetY(Trial) + 10]);
+       oval2 = round([oval1(1)+5 oval1(2)+5 oval1(3)-5 oval1(4)-5]);
+       
+       Screen('FrameOval', S.Window, [255 0 255], oval1, 10);
+       Screen('FrameOval', S.Window, [255 255 0], oval2, 10);
        
        Screen(S.Window,'Flip');
-       theData.targetTime(Trial) = GetSecs;
-       goTime = goTime + targetTime;
        [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
-       
        theData.stimResp{Trial} = keys1;
        theData.stimRT{Trial} = RT1;
        
-       % Post-target Time
-       desiredTime = (Trial)*stimTime;
-       curTime = GetSecs - baselineTime;
-       goTime = goTime + desiredTime - curTime - 1/120;       
-     
-       Screen(S.Window,'Flip'); 
-      
-       [keys2 RT2] = AG3recordKeys(ons_start,goTime,S.boxNum);
-       theData.judgeResp{Trial} = keys2;
-       theData.judgeRT{Trial} = RT2;
+       % ITI
+       goTime = goTime + blankTime;
+       Screen(S.Window,'Flip');
+       AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
+       
+       
        theData.dur(Trial) = GetSecs - ons_start;  %records precise trial duration
        
        cmd = ['save ' matName];
