@@ -78,7 +78,7 @@ Screen('TextSize', S.Window, 30);
 Screen('TextStyle', S.Window, 1);
 S.on = 1;  % Screen now on
 S.scrsz = get(0,'ScreenSize');
-S.respLetters = {'h' 'j' 'k' 'l'};
+S.respLetters = {'j' 'k' 'l'};
 
 %% info for study script
 S.DotDetectionRect = [S.scrsz(3)/2 - 10, S.scrsz(4)/2-10, S.scrsz(3)/2 + 10,  S.scrsz(4)/2+10];

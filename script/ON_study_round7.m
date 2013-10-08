@@ -51,7 +51,7 @@ for preall = startTrial:listLength
         theData.confActual{preall} = 'noanswer';
 end
 
-toneSet = {'tone1.wav' 'tone2.wav' 'tone3.wav' 'tone4.wav'};
+toneSet = {'tone1.wav' 'tone3.wav' 'tone4.wav'};
 % %preload sounds
 for L=1:length(toneSet)
     wavfilenameCue = fullfile(thePath.stim, toneSet{L});
@@ -173,6 +173,7 @@ for Trial = 1:listLength
        PsychPortAudio('Close', S.pahandle);
        goTime = goTime + blankTime;
        Screen(S.Window,'Flip');
+       PsychPortAudio('Stop', S.pahandle);
        AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
        
        
