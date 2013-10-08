@@ -150,7 +150,6 @@ for Trial = 1:listLength
        % Cue Sound
        S.pahandle = PsychPortAudio('Open', [], [], 0, cue.freq{theData.tone(Trial)}, cue.nrchannels{theData.tone(Trial)});
        soundStartTime = GetSecs;
-       goTime = soundTime;
        thisSound = cue.wavedata{theData.tone(Trial)};
        soundEndTime = soundStartTime+soundTime;
        PsychPortAudio('FillBuffer', S.pahandle, thisSound);
@@ -160,6 +159,7 @@ for Trial = 1:listLength
        desiredTime = (Trial)*stimTime + (Trial-1)*blankTime;
        curTime = GetSecs - baselineTime;
        goTime = desiredTime - curTime - 1/120;
+       %goTime = stimTime;
        
        stim = theData.item{Trial};
        DrawFormattedText(S.Window,stim,'center','center',S.textColor);
@@ -170,6 +170,7 @@ for Trial = 1:listLength
        
 
        % ITI
+       PsychPortAudio('Close', S.pahandle);
        goTime = goTime + blankTime;
        Screen(S.Window,'Flip');
        AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
