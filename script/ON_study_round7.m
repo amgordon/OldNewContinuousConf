@@ -173,7 +173,6 @@ for Trial = 1:listLength
        PsychPortAudio('Close', S.pahandle);
        goTime = goTime + blankTime;
        Screen(S.Window,'Flip');
-       PsychPortAudio('Stop', S.pahandle);
        AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
        
        

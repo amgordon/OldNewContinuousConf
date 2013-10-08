@@ -71,7 +71,7 @@ hsn = S.encHandNum;
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Each tone is associated with the press of a key: either h j k or l.  Your job is to learn which key response is associated with each tone.  To help you learn this, each tone will be accompanied by the display of the correct key press.  To learn the response mappings, please press the key that you see displayed on the screen.');
+    ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Each tone is associated with the press of a key: either j k or l.  Your job is to learn which key response is associated with each tone.  To help you learn this, each tone will be accompanied by the display of the correct key press.  To learn the response mappings, please press the key that you see displayed on the screen.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
