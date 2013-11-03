@@ -1,5 +1,5 @@
 
-function theData = ON_studyPrac1_round8(thePath,listName,sName, sNum, S,EncBlock, startTrial)
+function theData = ON_studyPrac2_round8(thePath,listName,sName, sNum, S,EncBlock, startTrial)
 
 % theData = AG3encode(thePath,listName,sName,S,startTrial);
 % This function accepts a list, then loads the images and runs the expt
@@ -19,8 +19,8 @@ cd(thePath.list);
 list = load(listName);
 
 
-theData.tone = [list.studyList{:,1}];
-
+theData.tone = [list.studyList{1,:}];
+theData.tone(1) = 4;
 listLength = length(theData.tone);
 
 scrsz = get(0,'ScreenSize');
@@ -28,7 +28,7 @@ scrsz = get(0,'ScreenSize');
 % Diagram of trial
 
 stimTime = 1.85;  % the word
-blankTime = .15;
+blankTime = 1.65;
 behLeadinTime = 4;
 soundTime = 1;
 
@@ -50,7 +50,7 @@ for preall = startTrial:listLength
         theData.confActual{preall} = 'noanswer';
 end
 
-toneSet = {'tone1.wav' 'tone3.wav' 'tone4.wav'};
+toneSet = {'tone1.wav' 'tone2.wav' 'tone3.wav' 'tone4.wav'};
 % %preload sounds
 for L=1:length(toneSet)
     wavfilenameCue = fullfile(thePath.stim, toneSet{L});
@@ -71,7 +71,7 @@ hsn = S.encHandNum;
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Each tone is associated with the press of a key: either j k or l.  Your job is to learn which key response is associated with each tone.  To help you learn this, each tone will be accompanied by the display of the correct key press.  To learn the response mappings, please press the key that you see displayed on the screen.');
+    ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Now that you have learned which key response goes with each tone, your job is to press the appropriate key associated with each tone.  You will be informed whether your response is correct or incorrect for each trial.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
@@ -161,7 +161,7 @@ for Trial = 1:listLength
        goTime = desiredTime - curTime - 1/120;
        
        stim = S.respLetters{theData.tone(Trial)};
-       DrawFormattedText(S.Window,stim,'center','center',S.textColor);
+       
        Screen(S.Window,'Flip');
        [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
        theData.stimResp{Trial} = keys1;
@@ -170,6 +170,12 @@ for Trial = 1:listLength
 
        % ITI
        goTime = goTime + blankTime;
+      
+       if strcmp(keys1(1), stim(1))
+           DrawFormattedText(S.Window,'Correct','center','center',S.textColor);
+       else
+           DrawFormattedText(S.Window,['Incorrect \n\nCorrect answer: ' stim],'center','center',S.textColor);
+       end
        Screen(S.Window,'Flip');
        AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
        
