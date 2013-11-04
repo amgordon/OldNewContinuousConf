@@ -73,9 +73,9 @@ hsn = S.encHandNum;
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase, you will see a series of words presented on the screen.  Please pay attention to each word as you will be asked questions about these words in later phases.  You will also hear a tone on each trial.  Each time you hear a tone, please make the appropriate response associated with that tone.');
+    ins_txt{1} =  sprintf('In this phase, you will see a series of words presented on the screen.  Some words will be displayed in blue and some will be displayed in red.  Please pay attention to each word as you will be asked questions about these words in later phases.  You will also hear a tone on each trial.  Each time you hear a tone, please make the appropriate response associated with that tone.');
 
-    DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
+    DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 50);
     Screen('Flip',S.Window);
 
     AG3getKey('g',S.kbNum);

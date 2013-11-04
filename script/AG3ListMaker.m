@@ -7,10 +7,10 @@ numItems = 1092;
 
 NStudy = numItems/2;
 NTones = 3;
-toneSet = {1 2 3};
+toneSet = {1 2 3 4};
 
-NSalient = 16;
-NPadWords = 184;
+NSalient = 18;
+NPadWords = 142;
 NCoefs = 10;
 NTerminalPads = 13;
 salSet = {0 1 2};
@@ -56,6 +56,11 @@ for i = 1:numLists;
     end
     sal = [sal zeros(1,NTerminalPads)];
     
+    
+    salSounds = Shuffle([ones(1,3), 2*ones(1,3), 3*ones(1,3)]);
+    
+    % ensure that salient words are equally accompanied by sounds1, 2, and
+    % 3.
     salModality = Shuffle([ones(1,NSalient/2), 2*ones(1,NSalient/2)]);
     sal(sal==1) = salModality;
     
@@ -73,8 +78,9 @@ for i = 1:numLists;
             toneIdxStudy(t) = thisShuffle(1);
         end
     end
+    toneIdxStudy(sal==1) = salSounds;
+    toneIdxStudy(sal==2) = 4;
     toneListStudy = toneSet(toneIdxStudy);
-    toneListStudy(sal==2) = {4};
     
     p = randperm(length(wordListStudy));
     wordListStudy = wordListStudy(p);

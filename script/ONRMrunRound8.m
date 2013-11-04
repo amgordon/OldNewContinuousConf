@@ -70,14 +70,14 @@ S.screenNumber = max(Screen('Screens'));
 S.screenColor = 0;
 S.textColor = 255;
 
-S.nonSalientColor = [0 0 255];
+S.nonSalientColor = [56 100 255];
 S.salientColor = [255 0 0];
 
 S.flashingRectColor = 100;
 S.responseBarColor = [255 255 255];
 S.blinkColor  = [0 0 0];
 [S.Window, S.myRect] = Screen(S.screenNumber, 'OpenWindow', S.screenColor, [], 32);
-Screen('TextSize', S.Window, 30);
+Screen('TextSize', S.Window, 50);
 Screen('TextStyle', S.Window, 1);
 S.on = 1;  % Screen now on
 S.scrsz = get(0,'ScreenSize');

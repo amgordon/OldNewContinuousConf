@@ -73,7 +73,7 @@ if EncBlock == 1
 
     ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Now that you have learned which key response goes with each tone, your job is to press the appropriate key associated with each tone.  You will be informed whether your response is correct or incorrect for each trial.');
 
-    DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
+    DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 50);
     Screen('Flip',S.Window);
 
     AG3getKey('g',S.kbNum);

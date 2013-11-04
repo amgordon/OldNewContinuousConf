@@ -74,7 +74,10 @@ end
 % for the first block, display instructions
 if RetBlock == 1
     ins_txt{1} = sprintf('During this phase of the study, you will view a series of words and will be asked to report your confidence concerning whether each word is "Old" (you encountered it in the first phase) or "New" (you did not encounter it in the first phase).  \n \n You can make your confidence judgment by clicking on the scale arc (see example below).  The greater your confidence that an item is old, the farther towards the edge of the bar labeled OLD you should click.  Similarly, the greater your confidence that a word is new, the farther towards the edge of the bar labeled NEW should you click.  \n \n Please distribute your responses across the entire scale bar.');
+    
+    Screen('TextSize', S.Window, 30);
     DrawFormattedText(S.Window, ins_txt{1},'center',100,255, 75);
+    
     
     %Screen('DrawLine', S.Window, S.responseBarColor, 400, 800, scrsz(3)-400, 800, 10);
     ShowCursor('CrossHair', S.screenNumber);

@@ -69,15 +69,19 @@ HideCursor;
 S.screenNumber = max(Screen('Screens'));
 S.screenColor = 0;
 S.textColor = 255;
+
+S.nonSalientColor = [0 0 128];
+S.salientColor = [255 0 0];
+
 S.flashingRectColor = 100;
-S.responseBarColor = [0 0 255];
+S.responseBarColor = [255 255 255];
 S.blinkColor  = [0 0 0];
 [S.Window, S.myRect] = Screen(S.screenNumber, 'OpenWindow', S.screenColor, [], 32);
-Screen('TextSize', S.Window, 30);
+Screen('TextSize', S.Window, 50);
 Screen('TextStyle', S.Window, 1);
 S.on = 1;  % Screen now on
 S.scrsz = get(0,'ScreenSize');
-S.respLetters = {'j' 'k' 'l'};
+S.respLetters = {'j' 'k' 'l' 'space'};
 
 %% info for study script
 S.DotDetectionRect = [S.scrsz(3)/2 - 10, S.scrsz(4)/2-10, S.scrsz(3)/2 + 10,  S.scrsz(4)/2+10];
@@ -104,8 +108,8 @@ S.respStimY = S.scrsz(4)/2+150;
 if testType == 1
     saveName = ['ONRMStudy' sName '_' num2str(sNum) '.mat'];
     
-    listName = sprintf('546_words_Study_List_NoAC_%g.mat', mod(sNum, 16));
-    respSelData(1) = ON_study_round7(thePath,listName,sName,sNum,S,1, 1);
+    listName = sprintf('546_words_Study_List_Salience_%g.mat', 1+mod(sNum-1, 16));
+    respSelData(1) = ON_study_round8(thePath,listName,sName,sNum,S,1, 1);
     
     checkEmpty = isempty(dir (saveName));
     suffix = 1;
@@ -123,7 +127,7 @@ if testType == 1
 elseif testType == 2
     saveName = ['ONRMTest' sName '_' num2str(sNum) '.mat'];
 
-    listName = ['1092_words_Test_List_NoAC_' num2str(mod(sNum,16)) '_' num2str(1) '.mat'];
+    listName = ['1092_words_Test_List_Salience_' num2str(1+mod(sNum-1,16)) '_' num2str(1) '.mat'];
     ONTestData(1) = ON_test(thePath,listName,sName,sNum,1, S);
 
     checkEmpty = isempty(dir (saveName));
@@ -141,10 +145,10 @@ elseif testType == 2
     
 elseif testType == 3
     
-    saveName = ['ON_studyPrac1_round7' sName '_' num2str(sNum) '.mat'];
+    saveName = ['ON_studyPrac1_round8' sName '_' num2str(sNum) '.mat'];
     
     listName = '546_words_Study_List_NoAC_prac1.mat';
-    pracData(1) = ON_studyPrac1_round7(thePath,listName,sName,sNum,S,1, 1);
+    pracData(1) = ON_studyPrac1_round8(thePath,listName,sName,sNum,S,1, 1);
     
     checkEmpty = isempty(dir (saveName));
     suffix = 1;
@@ -160,10 +164,10 @@ elseif testType == 3
     % here
 elseif testType == 4
     
-    saveName = ['ON_studyPrac2_round7' sName '_' num2str(sNum) '.mat'];
+    saveName = ['ON_studyPrac2_round8' sName '_' num2str(sNum) '.mat'];
     
     listName = '546_words_Study_List_NoAC_prac2.mat';
-    pracData(1) = ON_studyPrac2_round7(thePath,listName,sName,sNum,S,1, 1);
+    pracData(1) = ON_studyPrac2_round8(thePath,listName,sName,sNum,S,1, 1);
     
     checkEmpty = isempty(dir (saveName));
     suffix = 1;
