@@ -1,4 +1,4 @@
-function theData = AG3retrieve(thePath,listName,sName, sNum,RetBlock, S)
+function theData = ON_pictTest(thePath,listName,sName, sNum,RetBlock, S)
 
 % This function accepts a list, then loads the images and runs the expt
 % Run AG3.m first, otherwise thePath will be undefined.
@@ -170,7 +170,7 @@ Screen(S.Window,'Flip');
 qkeys(startTime,goTime,S.boxNum);
 
 
-for Trial = 678:682%683:listLength
+for Trial = 1:listLength
 
     ons_start = GetSecs;        
     theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
