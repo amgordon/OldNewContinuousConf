@@ -92,7 +92,7 @@ picPtrs(flashingPtr) = Screen('MakeTexture', S.Window, pic);
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase, you will see a series of pictures presented on the screen.  At some point during the presentation of each picture, you will hear a tone.  As soon as you hear the tone, please press the space bar as quickly as you can.');
+    ins_txt{1} =  sprintf('In this phase, you will see a series of pictures presented on the screen.  At some point during the presentation of each picture, you will hear a tone. \n \n You will have two jobs.  First, pay attention to each scene, as you will be asked about the scenes in a later round.  Second, as soon as you hear the tone, please press the space bar as quickly as you can. \n \n Please allot equal effort to each of these two tasks.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
