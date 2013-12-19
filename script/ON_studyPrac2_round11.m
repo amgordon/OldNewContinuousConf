@@ -190,7 +190,6 @@ end
 fprintf(['/nExpected time: ' num2str(goTime)]);
 fprintf(['/nActual time: ' num2str(GetSecs-startTime)]);
 
-
 cmd = ['save ' fullfile(S.subData,matName)];
 eval(cmd);
 
