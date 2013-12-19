@@ -216,7 +216,7 @@ for Trial = 1:listLength
     theData.dur(Trial) = GetSecs - ons_start;  %records precise trial duration
     theData.mouseX(Trial) = mouseX;
     theData.mouseY(Trial) = mouseY;
-    cmd = ['save ' matName];
+    cmd = ['save ' fullfile(S.subData,matName)];
     eval(cmd);
     
 end
@@ -224,7 +224,7 @@ end
 
 DrawFormattedText(S.Window,'Saving...','center','center', [100 100 100]);
 
-cmd = ['save ' matName];
+cmd = ['save ' fullfile(S.subData,matName)];
 eval(cmd);
 
 Screen(S.Window,'FillRect', S.screenColor);	% Blank Screen

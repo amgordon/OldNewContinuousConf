@@ -1,4 +1,4 @@
-function theData = ON_pictTest(thePath,listName,sName, sNum,RetBlock, S)
+function theData = AG3retrieve(thePath,listName,sName, sNum,RetBlock, S)
 
 % This function accepts a list, then loads the images and runs the expt
 % Run AG3.m first, otherwise thePath will be undefined.
@@ -84,7 +84,11 @@ end
 
 % for the first block, display instructions
 if RetBlock == 1
+<<<<<<< HEAD
     ins_txt{1} = sprintf('During this phase of the study, you will view a series of pictures and will be asked to report your confidence concerning whether each picture is "Old" (you encountered it in the first phase) or "New" (you did not encounter it in the first phase).  \n \n You can make your confidence judgment by clicking on the scale arc (see example below).  The greater your confidence that a picture is old, the farther towards the edge of the arc labeled OLD you should click.  Similarly, the greater your confidence that a picture is new, the farther towards the edge of the arc labeled NEW you should click.  \n \n Please distribute your responses across the entire scale arc.');
+=======
+    ins_txt{1} = sprintf('During this phase of the study, you will view a series of pictures and will be asked to report your confidence concerning whether each picture is "Old" (you encountered it in the first phase) or "New" (you did not encounter it in the first phase).  \n \n You can make your confidence judgment by clicking on the scale arc (see example below).  The greater your confidence that an item is old, the farther towards the edge of the arc labeled OLD you should click.  Similarly, the greater your confidence that a word is new, the farther towards the edge of the arc labeled NEW you should click.  \n \n Please distribute your responses across the entire scale arc.');
+>>>>>>> master
     DrawFormattedText(S.Window, ins_txt{1},'center',100,255, 75);
     
     %Screen('DrawLine', S.Window, S.responseBarColor, 400, 800, scrsz(3)-400, 800, 10);
@@ -170,7 +174,7 @@ Screen(S.Window,'Flip');
 qkeys(startTime,goTime,S.boxNum);
 
 
-for Trial = 661:listLength
+for Trial = 678:682%683:listLength
 
     ons_start = GetSecs;        
     theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
