@@ -71,7 +71,7 @@ hsn = S.encHandNum;
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Now that you have learned which key response goes with each tone, your job is to press the appropriate key associated with each tone.  You will be informed whether your response is correct or incorrect for each trial.');
+    ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Now that you have learned which key response goes with each tone, your job is to press the appropriate key associated with each tone.  If your response is correct, the word ''correct'' will appear in green.  If your response is incorrect, the correct response will appear in red.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
@@ -143,8 +143,7 @@ for Trial = 1:listLength
        
        ons_start = GetSecs;
        
-       theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
-       
+       theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation       
        
        % Cue Sound
        S.pahandle = PsychPortAudio('Open', [], [], 0, cue.freq{theData.tone(Trial)}, cue.nrchannels{theData.tone(Trial)});
@@ -167,14 +166,14 @@ for Trial = 1:listLength
        theData.stimResp{Trial} = keys1;
        theData.stimRT{Trial} = RT1;
       
-
        % ITI
        goTime = goTime + blankTime;
       
-       if strcmp(keys1(1), stim)
-           DrawFormattedText(S.Window,'correct','center','center',S.textColor);
+       if strcmp(upper(keys1(1)), stim)
+           DrawFormattedText(S.Window,'correct','center','center',[0 255 0]);
        else
-           DrawFormattedText(S.Window,'incorrect','center','center',S.textColor);
+           thisTxt = S.respLetters{theData.tone(Trial)};
+           DrawFormattedText(S.Window, thisTxt, 'center','center',[255 0 0]);
        end
        Screen(S.Window,'Flip');
        AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay

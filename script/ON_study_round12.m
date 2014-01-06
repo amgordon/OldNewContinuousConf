@@ -1,5 +1,5 @@
 
-function theData = ON_studyPrac1_round8(thePath,listName,sName, sNum, S,EncBlock, startTrial)
+function theData = ON_study_round12(thePath,listName,sName, sNum, S,EncBlock, startTrial)
 
 % theData = AG3encode(thePath,listName,sName,S,startTrial);
 % This function accepts a list, then loads the images and runs the expt
@@ -19,17 +19,19 @@ cd(thePath.list);
 list = load(listName);
 
 
-theData.tone = list.list;
+theData.tone = [list.studyList{:,2}];
+theData.item = list.studyList(:,1);
 
-listLength = length(theData.tone);
+listLength = length(theData.item);
 
 scrsz = get(0,'ScreenSize');
 
 % Diagram of trial
 
-stimTime = 2.85;  % the word
+initStimTime = .5; % stim time before sound
+stimTime = 1.85;  % total stim time
 blankTime = .15;
-behLeadinTime = 4;
+behLeadinTime = 1;
 soundTime = 1;
 
 Screen(S.Window,'FillRect', S.screenColor);
@@ -50,7 +52,21 @@ for preall = startTrial:listLength
         theData.confActual{preall} = 'noanswer';
 end
 
-toneSet = {'tone1.wav' 'tone2.wav' 'tone3.wav'};
+cd (thePath.stim);
+for n=1:listLength
+    picName = theData.item{n};
+    pic = imread(picName);
+    picPtrs(n) = Screen('MakeTexture', S.Window, pic);   
+    
+    pctLoaded = round(100*(n/listLength));
+    pctMsg = sprintf('pictures %g percent loaded', pctLoaded);
+    DrawFormattedText(S.Window,pctMsg,'center','center',S.textColor);
+    Screen(S.Window, 'Flip');
+end
+
+toneSet_h = {'tone1.wav' 'tone2.wav' 'tone3.wav'};
+toneSet = toneSet_h(S.handsToTones);
+
 % %preload sounds
 for L=1:length(toneSet)
     wavfilenameCue = fullfile(thePath.stim, toneSet{L});
@@ -71,13 +87,12 @@ hsn = S.encHandNum;
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase of the study, you will hear a tone on each trial.  Each tone is associated with the press of a key: either J K or L.  Your job is to learn which key response is associated with each tone.  To help you learn this, each tone will be accompanied by the display of the correct key press.  To learn the response mappings, please press the key that you see displayed on the screen.');
+    ins_txt{1} =  sprintf('In this phase, you will perform two tasks simultaneously.  First, you will pay attention to each picture as you will be asked questions about these pictures in later phases.  Second, you will also hear a tone on each trial.  Each time you hear a tone, please make the appropriate response associated with that tone.  \n \n Please allot equal effort to each of these two tasks.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
 
     AG3getKey('g',S.kbNum);
-
 end
 
 % get ready screen
@@ -145,38 +160,43 @@ for Trial = 1:listLength
        
        theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
        
+       % init stim
+       goTime = initStimTime;
+       Screen('DrawTexture', S.Window, picPtrs(Trial));
+       Screen(S.Window,'Flip');
+       theData.stimTime(Trial) = GetSecs;
+       AG3recordKeys(ons_start,goTime,S.boxNum);
        
        % Cue Sound
        S.pahandle = PsychPortAudio('Open', [], [], 0, cue.freq{theData.tone(Trial)}, cue.nrchannels{theData.tone(Trial)});
        soundStartTime = GetSecs;
-       goTime = soundTime;
        thisSound = cue.wavedata{theData.tone(Trial)};
        soundEndTime = soundStartTime+soundTime;
        PsychPortAudio('FillBuffer', S.pahandle, thisSound);
        PsychPortAudio('Start', S.pahandle, 1, 0, 1, soundEndTime);
        
-       % Stim
+       % post-sound stim time
        desiredTime = (Trial)*stimTime + (Trial-1)*blankTime;
        curTime = GetSecs - baselineTime;
        goTime = desiredTime - curTime - 1/120;
-       
-       stim = S.respLetters{theData.tone(Trial)};
-       DrawFormattedText(S.Window,stim,'center','center',S.textColor);
+
+       Screen('DrawTexture', S.Window, picPtrs(Trial));
        Screen(S.Window,'Flip');
+       theData.stimTime(Trial) = GetSecs;
+
        [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
        theData.stimResp{Trial} = keys1;
        theData.stimRT{Trial} = RT1;
-      
-
+       
        % ITI
+       PsychPortAudio('Close', S.pahandle);
        goTime = goTime + blankTime;
        Screen(S.Window,'Flip');
        AG3recordKeys(ons_start,goTime,S.boxNum);  % not collecting keys, just a delay
-       
-       
+              
        theData.dur(Trial) = GetSecs - ons_start;  %records precise trial duration
        
-       cmd = ['save ' fullfile(S.subData,matName)];
+       cmd = ['save ' fullfile(S.subData, matName)];
        eval(cmd);
        fprintf('%d\n',Trial);
 end
@@ -185,7 +205,7 @@ fprintf(['/nExpected time: ' num2str(goTime)]);
 fprintf(['/nActual time: ' num2str(GetSecs-startTime)]);
 
 
-cmd = ['save ' fullfile(S.subData,matName)];
+cmd = ['save ' fullfile(S.subData, matName)];
 eval(cmd);
 
 
