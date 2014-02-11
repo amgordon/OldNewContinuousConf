@@ -32,6 +32,8 @@ stimTime = 1.85;  % total stim time
 blankTime = .15;
 behLeadinTime = 1;
 soundTime = 2;
+m_f_offset_time = 1;
+trialTime = 2;
 
 Screen(S.Window,'FillRect', S.screenColor);
 Screen(S.Window,'Flip');
@@ -55,20 +57,18 @@ cd (thePath.stim);
 
 % %preload sounds
 for L=1:length(theData.soundFiles.m)
+    
+    % load male words
     wavfilenameCue.m = fullfile(thePath.sounds, theData.soundFiles.m{L});
     [yCue.m, cue.freq.m{L}] = wavread(wavfilenameCue.m);
     cue.wavedata.m{L} = yCue.m(:,1)';
     cue.nrchannels.m{L} = size(cue.wavedata.m,1); % Number of rows == number of channels.
     
+    % load female words
     wavfilenameCue.f = fullfile(thePath.sounds, theData.soundFiles.f{L});
     [yCue.f, cue.freq.f{L}] = wavread(wavfilenameCue.f);
     cue.wavedata.f{L} = yCue.f(:,1)';
     cue.nrchannels.f{L} = size(cue.wavedata.f,1); % Number of rows == number of channels.
-    
-    %     wavfilenameCue = fullfile(thePath.sounds, theData.soundFiles.f{L});
-    %     [yCue, cue.freq{L}] = wavread(wavfilenameCue);
-    %     cue.wavedata{L} = yCue(:,1)';
-    %     cue.nrchannels{L} = size(cue.wavedata,1); % Number of rows == number of channels.
 end
 
 
@@ -157,48 +157,27 @@ for Trial = 1:listLength
        ons_start = GetSecs;
        
        theData.onset(Trial) = GetSecs - startTime; %precise onset of trial presentation
-       %%
-       
-       % Cue Sound
-%        S.pahandle = PsychPortAudio('Open', [], [], 0, cue.freq{Trial}, cue.nrchannels{Trial});
-%        soundStartTime = GetSecs;
-%        thisSound = cue.wavedata{Trial};
-%        soundEndTime = soundStartTime+soundTime;
-%        PsychPortAudio('FillBuffer', S.pahandle, thisSound);
-%        PsychPortAudio('Start', S.pahandle, 1, 0, 0, soundEndTime);
-%        AG3recordKeys(ons_start,2,S.boxNum);
-       %%
-%        % Female Voice
+   
+       %% Female Voice
        S.pahandle.f = PsychPortAudio('Open', [], [], 0, cue.freq.f{Trial}, 2);
        soundStartTime = GetSecs;
        thisSound.f = .25*cue.wavedata.f{Trial};
        soundEndTime = soundStartTime+soundTime;
        PsychPortAudio('FillBuffer', S.pahandle.f, [zeros(size(thisSound.f)); thisSound.f]);
        PsychPortAudio('Start', S.pahandle.f, 1, 0, 0, soundEndTime);
-       %AG3recordKeys(ons_start,2,S.boxNum);
-       %PsychPortAudio('Close', S.pahandle.f);
               
-       % Male Voice
+       %% Male Voice
        S.pahandle.m = PsychPortAudio('Open', [], [], 0, cue.freq.m{Trial}, 2);
        soundStartTime = GetSecs;
        thisSound.m = cue.wavedata.m{Trial};
        soundEndTime = soundStartTime+soundTime;
        PsychPortAudio('FillBuffer', S.pahandle.m, [thisSound.m; zeros(size(thisSound.m))]);
-       AG3recordKeys(ons_start,1,S.boxNum);
+       AG3recordKeys(ons_start,m_f_offset_time,S.boxNum);
        PsychPortAudio('Start', S.pahandle.m, 1, 0, 0, soundEndTime);
        
-       AG3recordKeys(ons_start,2,S.boxNum);
-       % post-sound stim time
-       %PsychPortAudio('Close', S.pahandle.f);
-
-       PsychPortAudio('Close', S.pahandle.m);
+       AG3recordKeys(ons_start,trialTime,S.boxNum);
        
-%        desiredTime = (Trial)*stimTime + (Trial-1)*blankTime;
-%        curTime = GetSecs - baselineTime;
-%        goTime = desiredTime - curTime - 1/120;
-%        theData.stimTime(Trial) = GetSecs;
-
-      % [keys1 RT1] = AG3recordKeys(ons_start,goTime,S.boxNum);
+       PsychPortAudio('Close', S.pahandle.m);
        save(fullfile(S.subData, matName), 'theData', 'S')
 end
 

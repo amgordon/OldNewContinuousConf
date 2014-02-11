@@ -127,7 +127,7 @@ if testType == 1
 elseif testType == 2
     saveName = ['ONRMTest' sName '_' num2str(sNum) '.mat'];
 
-    listName = ['525_words_Test_List_Dichot_' num2str(mod(sNum,16)) '.mat'];
+    listName = ['900_Test_PicList_' num2str(mod(sNum,16)) '_' num2str(1) '.mat'];
     ONTestData(1) = ON_test_round13(thePath,listName,sName,sNum,1, S);
 
     checkEmpty = isempty(dir (saveName));
