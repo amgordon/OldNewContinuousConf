@@ -28,12 +28,12 @@ scrsz = get(0,'ScreenSize');
 % Diagram of trial
 
 initStimTime = .5; % stim time before sound
-stimTime = 1.85;  % total stim time
+stimTime = 3.85;  % total stim time
 blankTime = .15;
 behLeadinTime = 1;
-soundTime = 2;
-m_f_offset_time = 1;
-trialTime = 2;
+soundTime = 5;
+m_f_offset_time = 2.5;
+trialTime = 1;
 
 Screen(S.Window,'FillRect', S.screenColor);
 Screen(S.Window,'Flip');
@@ -161,7 +161,7 @@ for Trial = 1:listLength
        %% Female Voice
        S.pahandle.f = PsychPortAudio('Open', [], [], 0, cue.freq.f{Trial}, 2);
        soundStartTime = GetSecs;
-       thisSound.f = .25*cue.wavedata.f{Trial};
+       thisSound.f = cue.wavedata.f{Trial};
        soundEndTime = soundStartTime+soundTime;
        PsychPortAudio('FillBuffer', S.pahandle.f, [zeros(size(thisSound.f)); thisSound.f]);
        PsychPortAudio('Start', S.pahandle.f, 1, 0, 0, soundEndTime);
@@ -177,7 +177,7 @@ for Trial = 1:listLength
        
        AG3recordKeys(ons_start,trialTime,S.boxNum);
        
-       PsychPortAudio('Close', S.pahandle.m);
+       %PsychPortAudio('Close', S.pahandle.m);
        save(fullfile(S.subData, matName), 'theData', 'S')
 end
 

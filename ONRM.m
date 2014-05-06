@@ -12,7 +12,7 @@ thePath.script = fullfile(thePath.start, 'script');
 thePath.stim = fullfile(thePath.start, 'stim');
 thePath.data = fullfile(thePath.start, 'data');
 thePath.list = fullfile(thePath.start, 'list');
-thePath.sounds = fullfile(thePath.stim, 'dichoticStims');
+thePath.sounds = fullfile(thePath.stim, 'dichoticPhrases');
 % add more dirs above
 
 % Add relevant paths for this experiment
