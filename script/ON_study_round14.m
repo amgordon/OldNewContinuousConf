@@ -85,7 +85,7 @@ hsn = S.encHandNum;
 % for the first block, display instructions
 if EncBlock == 1
 
-    ins_txt{1} =  sprintf('In this phase, you will hear phrases read in each of your ears by different voices.  Please pay attention to these phrases, as you will be asked about them in later parts of the study.');
+    ins_txt{1} =  sprintf('In this part of the study, you will hear phrases read in each of your ears by different voices.  Please pay attention to these phrases, as you will be asked about them in later parts of the study.');
 
     DrawFormattedText(S.Window, ins_txt{1},'center','center',255, 75);
     Screen('Flip',S.Window);
